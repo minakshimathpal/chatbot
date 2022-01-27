@@ -1,0 +1,239 @@
+version: "3.0"
+
+intents:
+  - greet
+  - general
+  - purchase:          #If customer has a straight intent to buy an item
+      use_entities:
+        - age_stage
+        - garment_type
+        - colour
+        - pattern
+        - fabric_type
+        - gender
+        - size
+        - occasion 
+  - browse:            #If the customer is just browsing
+      use_entities:
+        - age_stage
+        - garment_type
+        - colour
+        - pattern
+        - fabric_type
+        - gender
+        - size
+        - occasion 
+  - description:       #Customers can manually describe an item they desire
+      use_entities:
+        - age_stage
+        - garment_type
+        - colour
+        - pattern
+        - fabric_type
+        - gender
+        - size
+        - occasion 
+  - reference         #Reference can be an image or a link to a product
+  - acknowledge_info  #to acknowledge any additional info
+  - window shopping:   #If the customer is just browsing
+      use_entities:
+        - age_stage
+        - garment_type
+        - colour
+        - pattern
+        - fabric_type
+        - gender
+        - size
+        - occasion 
+  - goodbye
+  - unhappy
+  - affirm           #Affirm if no further help is needed
+  - bot_challenge:    
+      #use_entities: [] 
+
+
+entities:
+  - intention
+  - age_stage
+  - garment_type:
+      roles:
+        - upper
+        - lower
+        - whole
+  - accessories
+  - colour
+  - pattern
+  - reference     #this is for an image or a link to an item
+  - fabric_type
+  - gender
+  - size
+  - occasion 
+
+
+slots: #from user input
+  intention: #possible values for customer's intention
+    type: categorical
+    values:
+      - browsing
+      - window_shopping
+      - purchasing
+    influence_conversation: true     #can be removed or modified later    
+    mappings: 
+    - type: from_entity
+      entity: intention #extract value from this entity
+    
+
+  age_stage: #possible values for intended age
+    type: categorical    
+    values:
+      - babies
+      - kids
+      - adolescent 
+      - teens
+      - middle_age
+      - senior
+    mappings: 
+    - type: from_entity
+      entity: age_stage   
+
+  garment_type:  #possible values for different garment types-- all inclusive
+    type: categorical  #can take name of any of the garment types the website hosts
+    values: 
+      - formal_shirts
+      - casual_shirts
+      - trousers
+      - t_shirts
+      - shorts
+      - shoes
+      - cargo_shorts
+      - women_clothes
+    mappings: 
+    - type: from_entity
+      entity: garment_type  
+
+  accessories:
+    type: categorical
+    values:
+      - tie
+      - socks
+      - stole
+    mappings:
+    - type: from_entity
+      entity: accessories
+
+  size: #possible values for sizes
+    type: categorical
+    values: 
+      - small
+      - medium
+      - large
+      - XL
+      - XLL
+      - XLLL
+    mappings: 
+    - type: from_entity
+      entity: size
+
+  colour: #possible values for colour
+    type: categorical
+    values:
+      - black
+      - white
+      - grey
+      - blue
+      - red
+      - green
+      - yellow     
+    mappings: 
+    - type: from_entity
+      entity: colour
+
+  gender: #possible values for gender
+    type: categorical
+    values:
+      - male
+      - female
+      - unisex
+    mappings: 
+    - type: from_entity
+      entity: gender  
+
+  occasion: #possible values for occasion
+    type: categorical
+    values:
+      - casual
+      - formal
+      - ethnic
+    mappings: 
+    - type: from_entity
+      entity: occasion
+    
+
+  reference: # a slot which has an image or a link to an item
+    type: text
+    values:
+      - image # an image file from customer to be sent to image API
+      - link  # a link to an item from customer, can add web scrapping to be fed to into image API
+    mappings: 
+    - type: from_entity
+      entity: reference  
+
+
+forms:
+  inquiry_form:
+    required_slots:
+      - intention
+      - age_stage
+      - garment_type
+      - gender
+
+
+responses: #agen to user
+  utter_greet:
+    - text: "Hello! What can I help you with?"
+
+  utter_browse:
+    - text: "What can I help you search for?"
+
+  utter_purchase:
+    - text: "What are you looking for today?"
+
+  utter_description:
+    - text: "Can you roughly describe the item and its features so I can find them for you?"
+
+  utter_reference:
+    - text: "Do you have a product image or a link which I can use as a reference?"
+
+  utter_acknowledge_info:
+    - text: "Thank you! I will search for a suitable item..."
+
+  utter_window_shopping:
+    - text: "What do you have in mind?"
+
+  utter_unhappy:
+    - text: "Ohh... I am sorry!!!"
+    - text: "Could you describe what you have in mind?"
+    - text: "I will try again... and find something better"
+
+  utter_show_result:
+    - text: "These are what I've found which match your specifications..."
+
+  utter_did_that_help:
+    - text: "Did that help with what you had in mind?"
+
+  utter_general:
+    - text: "I am here if you need me..."
+
+  utter_affirm:
+    - text: "Anything else I can help you with..."
+
+  utter_goodbye:
+    - text: "See you next time..."
+
+  utter_iamabot:
+    - text: "I know you want to challenge me..."
+    - text: "but I am just a bot designed to help you but clothes."
+
+session_config:
+  session_expiration_time: 500
+  carry_over_slots_to_new_session: true
